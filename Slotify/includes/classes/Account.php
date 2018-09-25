@@ -1,10 +1,11 @@
 <?php 
 class Account{
-
+	private $con;
 		private $errorArray;
 
 
-	public function __construct(){
+	public function __construct($con){
+		$this->con = $con;
 		$this->errorArray = array();
 	}
 	public function register($un, $fn, $ln, $em, $em2, $pw, $pw2){
@@ -16,7 +17,7 @@ class Account{
 
 		if(empty($this->errorArray)){
 			//Insert into db
-			return true;
+			return $this->insertUserDetails($un, $fn, $ln, $em, $pw);
 		}
 		else{
 			return false;
@@ -34,6 +35,18 @@ class Account{
 			return;
 		}
 		//TODO: check if uername exists.
+	}
+
+	private function insertUserDetails($un, $fn, $ln, $em, $pw){
+		$encryptedPw = md5($pw);
+		$profilePic = "assets/images/profile-pics/face.png";
+		$date = date("Y-m-d");
+
+		//echo "INSERT INTO users VALUES ('','$un', '$fn', '$ln', '$em', '$encryptedPw', '$date', '$profilePic')";
+
+		$result = mysqli_query($this->con,"INSERT INTO users VALUES ('','$un', '$fn', '$ln', '$em', '$encryptedPw', '$date', '$profilePic')");
+
+		return $result;
 	}
 
 	private function validatefirstName($fn){
